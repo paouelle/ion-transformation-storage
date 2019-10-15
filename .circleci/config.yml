@@ -1,0 +1,92 @@
+version: 2.1
+jobs:
+  build:
+    docker: &image
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - run: &env
+          name: Setting environment
+          command: |
+            echo "export RELEASE=0" >> $BASH_ENV
+            echo "export RELEASE_VERSION=NA" >> $BASH_ENV
+            echo "export RELEASE_TAG=NA" >> $BASH_ENV
+            echo "export NEXT_VERSION=NA" >> $BASH_ENV
+            echo "export ION_GPG_KEYRING=$ION_RELEASE_KEY" >> $BASH_ENV
+            echo "export DISABLE_DOWNLOAD_PROGRESS_OPTS=-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn" >> $BASH_ENV
+            echo "export LINUX_MVN_RANDOM=-Djava.security.egd=file:/dev/./urandom" >> $BASH_ENV
+            echo "export COVERAGE_EXCLUSIONS=**/test/**/*,**/itests/**/*,**/*Test*,**/sdk/**/*,**/*.js,**/node_modules/**/*,**/jaxb/**/*,**/wsdl/**/*,**/nces/sws/**/*,**/*.adoc,**/*.txt,**/*.xml" >> $BASH_ENV
+            echo "export GITHUB_USERNAME=connexta" >> $BASH_ENV
+            echo "export GITHUB_REPONAME=ion-transformation-storage" >> $BASH_ENV
+            echo "export GITHUB_KEY=$GITHUB_REPONAME-github-key" >> $BASH_ENV
+            source $BASH_ENV
+      - checkout
+      - restore_cache: &restore_cache
+          keys:
+            - mvn-repo-v1-{{ .Branch }}
+      - run:
+          name: Building
+          command: |
+            if [ $RELEASE = true ]
+            then
+              mvn -B -Dtag=$RELEASE_TAG -DreleaseVersion=$RELEASE_VERSION -DdevelopmentVersion=$NEXT_VERSION -Dgpg.secretKeyring=$ION_GPG_KEYRING -Dgpg.publicKeyring=$ION_GPG_KEYRING release:prepare
+              echo "export RELEASE_CONFIG = `git rev-parse HEAD`" >> $BASH_ENV
+            else
+              mvn clean install javadoc:aggregate -B $DISABLE_DOWNLOAD_PROGRESS_OPTS $EXCLUDED_ITEST_MODULES
+            fi
+      - run: &save_test_results
+          name: Save test results
+          command: |
+            mkdir -p ~/test-results/junit/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-results/junit
+      - run: &make_workspace
+          name: Create Workspace Dir
+          command: mkdir -p /tmp/workspace
+      - persist_to_workspace: &persist_workspace
+          root: ~/
+          paths:
+            - project
+      - save_cache: &save_cache
+          key: mvn-repo-v1-{{ .Branch }}
+          paths:
+            - ~/.m2
+  incremental_build:
+    docker: *image
+    steps:
+      - run: *env
+      - checkout
+      - restore_cache: *restore_cache
+      - run:
+          name: Building
+          command: |
+            mvn install -B -DskipTests $DISABLE_DOWNLOAD_PROGRESS_OPTS
+            mvn clean install javadoc:aggregate -B -Dgib.enabled=true -Dgib.referenceBranch=/refs/remotes/origin/$CHANGE_TARGET $DISABLE_DOWNLOAD_PROGRESS_OPTS $EXCLUDED_ITEST_MODULES
+      - run: *save_test_results
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-results/junit
+      - run: *make_workspace
+      - persist_to_workspace: *persist_workspace
+      - save_cache: *save_cache
+
+workflows:
+  version: 2.1
+  master:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
+
+  pull_request:
+    jobs:
+      - incremental_build:
+          filters:
+            branches:
+              ignore:
+                - master
