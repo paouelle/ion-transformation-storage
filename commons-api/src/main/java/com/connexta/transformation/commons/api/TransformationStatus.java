@@ -35,7 +35,7 @@ public interface TransformationStatus {
    *
    * @return information about the request that started this transformation
    */
-  RequestInfo getRequestInfo();
+  Dataset getRequestInfo();
 
   /**
    * Returns the start time of the transformation.

@@ -17,7 +17,6 @@ import static com.connexta.transformation.util.ExceptionHandler.unwrap;
 import static com.connexta.transformation.util.ExceptionHandler.wrap;
 
 import com.connexta.transformation.commons.api.MetadataTransformation;
-import com.connexta.transformation.commons.api.RequestInfo;
 import com.connexta.transformation.commons.api.Transformation;
 import com.connexta.transformation.commons.api.exceptions.InvalidFieldException;
 import com.connexta.transformation.commons.api.exceptions.PersistenceException;
@@ -69,7 +68,7 @@ public abstract class AbstractTransformationImpl extends Persistable<Transformat
       URL currentLocation, URL finalLocation, URL metacardLocation, Clock clock) {
     super(AbstractTransformationImpl.PERSISTABLE_TYPE);
     this.clock = clock;
-    this.requestInfo = new RequestInfoImpl(currentLocation, finalLocation, metacardLocation);
+    this.requestInfo = new DatasetImpl(currentLocation, finalLocation, metacardLocation);
     this.startTime = Instant.ofEpochMilli(clock.wallTime());
   }
 
@@ -204,7 +203,7 @@ public abstract class AbstractTransformationImpl extends Persistable<Transformat
     }
     super.writeTo(pojo);
     convertAndSetOrFailIfNull(
-        "requestInfo", this::getRequestInfo, RequestInfoImpl::toPojo, pojo::setRequestInfo);
+        "requestInfo", this::getRequestInfo, DatasetImpl::toPojo, pojo::setRequestInfo);
     setOrFailIfNull("startTime", this::getStartTime, pojo::setStartTime);
     return pojo.setVersion(TransformationPojo.CURRENT_VERSION)
         .setMetadatas(
@@ -238,7 +237,7 @@ public abstract class AbstractTransformationImpl extends Persistable<Transformat
   protected abstract AbstractMetadataImpl fromPojo(MetadataPojo pojo) throws PersistenceException;
 
   @VisibleForTesting
-  void setRequestInfo(RequestInfoImpl requestInfo) {
+  void setRequestInfo(DatasetImpl requestInfo) {
     this.requestInfo = requestInfo;
   }
 
@@ -268,14 +267,14 @@ public abstract class AbstractTransformationImpl extends Persistable<Transformat
     convertAndSetOrFailIfNull(
         "requestInfo",
         pojo::getRequestInfo,
-        RequestInfoImpl::new,
+        DatasetImpl::new,
         this::setRequestInfoAndCheckForUnknown);
     setOrFailIfNull("startTime", pojo::getStartTime, this::setStartTime);
     setMetadatasAndCheckForUnknowns(
         ExceptionHandler.unwrap(() -> pojo.metadatas().map(ExceptionHandler.wrap(this::fromPojo))));
   }
 
-  private void setRequestInfoAndCheckForUnknown(RequestInfoImpl requestInfo) {
+  private void setRequestInfoAndCheckForUnknown(DatasetImpl requestInfo) {
     this.requestInfo = requestInfo;
     this.hasUnknowns |= requestInfo.hasUnknowns();
   }

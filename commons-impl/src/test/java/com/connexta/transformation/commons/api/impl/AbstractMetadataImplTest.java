@@ -14,7 +14,6 @@
 package com.connexta.transformation.commons.api.impl;
 
 import com.connexta.transformation.commons.api.ErrorCode;
-import com.connexta.transformation.commons.api.RequestInfo;
 import com.connexta.transformation.commons.api.TransformationStatus.State;
 import com.connexta.transformation.commons.api.exceptions.InvalidFieldException;
 import com.connexta.transformation.commons.api.exceptions.UnsupportedVersionException;
@@ -64,13 +63,13 @@ public class AbstractMetadataImplTest {
     }
   }
 
-  private static final RequestInfoImpl REQUEST =
-      new RequestInfoImpl(
+  private static final DatasetImpl REQUEST =
+      new DatasetImpl(
           AbstractMetadataImplTest.REQUEST_CURRENT_LOCATION,
           AbstractMetadataImplTest.REQUEST_FINAL_LOCATION,
           AbstractMetadataImplTest.REQUEST_METACARD_LOCATION);
-  private static final RequestInfoImpl REQUEST2 =
-      new RequestInfoImpl(
+  private static final DatasetImpl REQUEST2 =
+      new DatasetImpl(
           AbstractMetadataImplTest.REQUEST_CURRENT_LOCATION,
           AbstractMetadataImplTest.REQUEST_FINAL_LOCATION,
           AbstractMetadataImplTest.REQUEST_METACARD_LOCATION2);

@@ -14,7 +14,6 @@
 package com.connexta.transformation.commons.api.impl;
 
 import com.connexta.transformation.commons.api.ErrorCode;
-import com.connexta.transformation.commons.api.RequestInfo;
 import com.connexta.transformation.commons.api.TransformationStatus.State;
 import com.connexta.transformation.commons.api.exceptions.InvalidFieldException;
 import com.connexta.transformation.commons.api.exceptions.TransformationNotFoundException;
@@ -96,13 +95,13 @@ public class AbstractTransformationImplTest {
     }
   }
 
-  private static final RequestInfoImpl REQUEST =
-      new RequestInfoImpl(
+  private static final DatasetImpl REQUEST =
+      new DatasetImpl(
           AbstractTransformationImplTest.REQUEST_CURRENT_LOCATION,
           AbstractTransformationImplTest.REQUEST_FINAL_LOCATION,
           AbstractTransformationImplTest.REQUEST_METACARD_LOCATION);
-  private static final RequestInfoImpl REQUEST2 =
-      new RequestInfoImpl(
+  private static final DatasetImpl REQUEST2 =
+      new DatasetImpl(
           AbstractTransformationImplTest.REQUEST_CURRENT_LOCATION,
           AbstractTransformationImplTest.REQUEST_FINAL_LOCATION,
           AbstractTransformationImplTest.REQUEST_METACARD_LOCATION2);

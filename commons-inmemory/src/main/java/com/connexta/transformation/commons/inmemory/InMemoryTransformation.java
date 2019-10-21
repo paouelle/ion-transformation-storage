@@ -19,7 +19,7 @@ import com.connexta.transformation.commons.api.exceptions.PersistenceException;
 import com.connexta.transformation.commons.api.exceptions.TransformationNotFoundException;
 import com.connexta.transformation.commons.api.impl.AbstractMetadataImpl;
 import com.connexta.transformation.commons.api.impl.AbstractTransformationImpl;
-import com.connexta.transformation.commons.api.impl.RequestInfoImpl;
+import com.connexta.transformation.commons.api.impl.DatasetImpl;
 import com.connexta.transformation.pojo.MetadataPojo;
 import java.net.URL;
 
@@ -29,7 +29,7 @@ public class InMemoryTransformation extends AbstractTransformationImpl {
   private volatile boolean deleted;
 
   /**
-   * Generates a startTime, a Transform ID, and the related {@link RequestInfoImpl}.
+   * Generates a startTime, a Transform ID, and the related {@link DatasetImpl}.
    *
    * @param manager the associated manager
    * @param currentLocation the location to retrieve the file

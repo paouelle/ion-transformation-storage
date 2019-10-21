@@ -15,7 +15,6 @@ package com.connexta.transformation.commons.api.impl;
 
 import com.connexta.transformation.commons.api.ErrorCode;
 import com.connexta.transformation.commons.api.MetadataTransformation;
-import com.connexta.transformation.commons.api.RequestInfo;
 import com.connexta.transformation.commons.api.exceptions.InvalidFieldException;
 import com.connexta.transformation.commons.api.exceptions.PersistenceException;
 import com.connexta.transformation.commons.api.exceptions.UnsupportedVersionException;
@@ -200,7 +199,7 @@ public abstract class AbstractMetadataImpl extends Persistable<MetadataPojo>
     setOrFailIfNullOrEmpty("transformId", this::getTransformId, pojo::setTransformId);
     setOrFailIfNullOrEmpty("type", this::getMetadataType, pojo::setType);
     convertAndSetOrFailIfNull(
-        "requestInfo", this::getRequestInfo, RequestInfoImpl::toPojo, pojo::setRequestInfo);
+        "requestInfo", this::getRequestInfo, DatasetImpl::toPojo, pojo::setRequestInfo);
     setOrFailIfNull("startTime", this::getStartTime, pojo::setStartTime);
     convertAndSetOrFailIfNull("state", this::getState, State::name, pojo::setState);
     convertAndSet(
@@ -280,7 +279,7 @@ public abstract class AbstractMetadataImpl extends Persistable<MetadataPojo>
   }
 
   @VisibleForTesting
-  void setRequestInfo(RequestInfoImpl requestInfo) {
+  void setRequestInfo(DatasetImpl requestInfo) {
     this.requestInfo = requestInfo;
   }
 
@@ -325,7 +324,7 @@ public abstract class AbstractMetadataImpl extends Persistable<MetadataPojo>
     convertAndSetOrFailIfNull(
         "requestInfo",
         pojo::getRequestInfo,
-        RequestInfoImpl::new,
+        DatasetImpl::new,
         this::setRequestInfoAndCheckForUnknown);
     setOrFailIfNull("startTime", pojo::getStartTime, this::setStartTime);
     convertAndSetEnumValueOrFailIfNullOrEmpty(
@@ -338,7 +337,7 @@ public abstract class AbstractMetadataImpl extends Persistable<MetadataPojo>
     setContentLength(Math.max(-1L, pojo.getContentLength()));
   }
 
-  private void setRequestInfoAndCheckForUnknown(RequestInfoImpl requestInfo) {
+  private void setRequestInfoAndCheckForUnknown(DatasetImpl requestInfo) {
     this.requestInfo = requestInfo;
     this.hasUnknowns |= requestInfo.hasUnknowns();
   }

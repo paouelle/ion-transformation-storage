@@ -15,6 +15,7 @@ package com.connexta.transformation.commons.api;
 
 /** Error codes indicating failures that can occur in the transformation process. */
 public enum ErrorCode {
+  // TODO: more specific codes should be added as we go
   TRANSFORMATION_FAILURE,
 
   /**

@@ -15,7 +15,6 @@ package com.connexta.transformation.commons.inmemory;
 
 import com.connexta.transformation.commons.api.ErrorCode;
 import com.connexta.transformation.commons.api.MetadataTransformation;
-import com.connexta.transformation.commons.api.RequestInfo;
 import com.connexta.transformation.commons.api.exceptions.PersistenceException;
 import com.connexta.transformation.commons.api.impl.AbstractMetadataImpl;
 import com.connexta.transformation.pojo.MetadataPojo;
