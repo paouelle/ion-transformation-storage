@@ -18,6 +18,7 @@ import com.connexta.transformation.commons.api.exceptions.TransformationExceptio
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
+import java.util.OptionalLong;
 
 /**
  * Handles information about a piece of metadata that has been, or will be generated through the
@@ -57,7 +58,7 @@ public interface MetadataTransformation extends TransformationStatus {
    * @return the length of the metadata or empty if the metadata hasn't been generated or failed to
    *     be generated
    */
-  Optional<String> getContentLength();
+  OptionalLong getContentLength();
 
   /**
    * Used to signify the successful creation of the metadata for this MetadataTransformation. The

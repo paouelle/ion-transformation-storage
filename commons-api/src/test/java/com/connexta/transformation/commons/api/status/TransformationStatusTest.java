@@ -44,6 +44,12 @@ public class TransformationStatusTest {
   }
 
   @Test
+  public void isCompletedUnknown() {
+    status = mockTransformationStatus(State.UNKNOWN);
+    assertFalse(status.isCompleted());
+  }
+
+  @Test
   public void hasFailedTrue() {
     status = mockTransformationStatus(State.FAILED);
     assertTrue(status.hasFailed());

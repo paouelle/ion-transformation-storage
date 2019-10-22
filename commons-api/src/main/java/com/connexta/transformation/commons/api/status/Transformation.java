@@ -58,24 +58,4 @@ public interface Transformation extends TransformationStatus {
         .reduce(State::reduce)
         .orElse(State.IN_PROGRESS);
   }
-
-  @Override
-  default boolean isCompleted() {
-    return metadatas().allMatch(MetadataTransformation::isCompleted);
-  }
-
-  @Override
-  default boolean hasFailed() {
-    return isCompleted() && metadatas().anyMatch(MetadataTransformation::hasFailed);
-  }
-
-  @Override
-  default boolean wasSuccessful() {
-    return metadatas().allMatch(MetadataTransformation::wasSuccessful);
-  }
-
-  @Override
-  default boolean isUnknown() {
-    return isCompleted() && metadatas().anyMatch(MetadataTransformation::isUnknown);
-  }
 }

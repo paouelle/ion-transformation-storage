@@ -19,11 +19,11 @@ import java.net.URI;
 public interface RequestInfo {
 
   /**
-   * Returns a URI which can be used to download the metadata that is to be transformed.
+   * Returns a URI which can be used to download the metacard that is to be transformed.
    *
-   * @return a URI for retrieving the metadata to be transformed
+   * @return a URI for retrieving the metacard to be transformed
    */
-  URI getMetadataLocation();
+  URI getMetacardLocation();
 
   /**
    * Returns a URI which can be used to download the resource that will be used for the

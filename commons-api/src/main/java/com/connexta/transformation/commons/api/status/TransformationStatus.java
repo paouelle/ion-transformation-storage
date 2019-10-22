@@ -77,7 +77,7 @@ public interface TransformationStatus {
   default boolean isCompleted() {
     final State state = getState();
 
-    return state != State.IN_PROGRESS;
+    return state == State.SUCCESSFUL || state == State.FAILED;
   }
 
   /**

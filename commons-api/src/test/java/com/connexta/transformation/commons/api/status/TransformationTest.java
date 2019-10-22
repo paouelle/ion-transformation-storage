@@ -152,6 +152,14 @@ public class TransformationTest {
   }
 
   @Test
+  public void hasFailedWithUnknown() {
+    createMetadata(State.FAILED, "one");
+    createMetadata(State.UNKNOWN, "two");
+    createMetadata(State.FAILED, "three");
+    assertFalse(transformation.hasFailed());
+  }
+
+  @Test
   public void wasSuccessfulTrue() {
     createMetadata(State.SUCCESSFUL, "one");
     createMetadata(State.SUCCESSFUL, "two");
