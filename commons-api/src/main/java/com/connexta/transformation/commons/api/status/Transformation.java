@@ -14,6 +14,10 @@
 package com.connexta.transformation.commons.api.status;
 
 import com.connexta.transformation.commons.api.exceptions.TransformationException;
+import com.connexta.transformation.commons.api.exceptions.TransformationNotFoundException;
+import java.time.Instant;
+import java.util.Comparator;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -21,6 +25,13 @@ import java.util.stream.Stream;
  * request, i.e. info about an entire transformation.
  */
 public interface Transformation extends TransformationStatus {
+  /**
+   * Deletes this transformation.
+   *
+   * @throws TransformationException if an error occurs while executing this method
+   * @throws IllegalArgumentException if this transformation has already been deleted
+   */
+  void delete() throws TransformationException;
 
   /**
    * Adds the creation of a new metadata type as part of this transformation.
@@ -28,7 +39,8 @@ public interface Transformation extends TransformationStatus {
    * @param metadataType the type of metadata to be generated (e.g. metacard, irm...)
    * @return a {@link MetadataTransformation} for the metadata to be generated
    * @throws TransformationException if an error occurs while executing this method
-   * @throws IllegalArgumentException if this transformation has already been completed
+   * @throws IllegalStateException if this transformation has already been completed or was deleted
+   *     already
    */
   MetadataTransformation add(String metadataType) throws TransformationException;
 
@@ -51,11 +63,34 @@ public interface Transformation extends TransformationStatus {
    */
   Stream<MetadataTransformation> metadatas();
 
+  /**
+   * Returns a {@link MetadataTransformation}, for the given type.
+   *
+   * @param metadataType the type of metadata to retrieve
+   * @return the {@link MetadataTransformation} corresponding to the specified type
+   * @throws TransformationNotFoundException if no metadata of the given type is being generated
+   *     from this transformation
+   */
+  MetadataTransformation getMetadata(String metadataType) throws TransformationNotFoundException;
+
   @Override
   default State getState() {
     return metadatas()
         .map(TransformationStatus::getState)
         .reduce(State::reduce)
         .orElse(State.IN_PROGRESS);
+  }
+
+  @Override
+  default Optional<Instant> getCompletionTime() {
+    if (isCompleted()) {
+      // Dont check the presence of Optionals here because they have to be if isCompleted() is true
+      return metadatas()
+          .map(MetadataTransformation::getCompletionTime)
+          .map(Optional::get)
+          .max(Comparator.naturalOrder());
+    } else {
+      return Optional.empty();
+    }
   }
 }

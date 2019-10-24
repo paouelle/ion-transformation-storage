@@ -24,7 +24,6 @@ import java.util.Optional;
  * the transformation the status is associated with.
  */
 public interface TransformationStatus {
-
   /**
    * Returns the ID of the transformation that this status is associated with.
    *
@@ -54,20 +53,30 @@ public interface TransformationStatus {
   Optional<Instant> getCompletionTime();
 
   /**
+   * Gets the current state of the transformation.
+   *
+   * @return the current transformation state
+   */
+  State getState();
+
+  /**
    * Returns the duration of the transformation. If the transformation is ongoing, the difference
    * between the start time and now will be returned, otherwise, the difference between the start
    * and completion times will be returned.
    *
    * @return the duration of the transformation.
    */
-  Duration getDuration();
+  default Duration getDuration() {
+    return Duration.between(getStartTime(), getCompletionTime().orElseGet(Instant::now));
+  }
 
   /**
-   * Gets the current state of the transformation.
+   * Checks if the associated transformation has been deleted.
    *
-   * @return the current transformation state
+   * @return <code>true</code> if the associated transformation has been deleted; <code>false</code>
+   *     otherwise
    */
-  State getState();
+  boolean isDeleted();
 
   /**
    * Returns true if the transformation has finished, otherwise, returns false.
